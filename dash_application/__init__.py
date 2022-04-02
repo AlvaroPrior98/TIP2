@@ -16,6 +16,7 @@ df = pd.DataFrame(
 )
 
 
+
 def create_dash_application(flask_app):
     dash_app = dash.Dash(server=flask_app, name="KPI1", url_base_pathname="/kpi1/")
     dash_app.layout = html.Div(
@@ -27,7 +28,7 @@ def create_dash_application(flask_app):
         """
             ),
             dcc.Graph(
-                id="example-graph",
+                id="graph-1a",
                 figure=px.bar(df, x="Fruit", y="Amount", color="City", barmode="group"),
             ),
         ]
