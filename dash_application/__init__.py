@@ -5,16 +5,25 @@ from flask_login.utils import login_required
 import plotly.express as px
 import pandas as pd
 
+from urllib import response
+from urllib.request import urlopen
+import json
+
 # assume you have a "long-form" data frame
 # see https://plotly.com/python/px-arguments/ for more options
-df = pd.DataFrame(
+
+df2 = pd.DataFrame(
     {
-        "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
-        "Amount": [4, 1, 2, 2, 4, 5],
-        "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"],
+        "types": ["Access Failure", "Communications Failure", "Data Issue", "Default", "Hardware Failure", "Performance Issue",
+                  "Printing Failure", "Process Failure", "Security Issue", "Security Cyberattacks", "Software Failure", 
+                  "Software Warning", "Telephone Failure"],
+        "number": [4206, 128, 231, 216, 128, 752, 49, 216, 20, 16, 1728, 25, 75],
     }
 )
 
+
+response = urlopen("https://g986b1d252d1c63-db2022.adb.eu-frankfurt-1.oraclecloudapps.com/ords/tip/kpi1/incvol/")
+df1 = json.loads(response.read())['items']
 
 
 def create_dash_application(flask_app):
@@ -24,13 +33,18 @@ def create_dash_application(flask_app):
             html.H1(children="IBERIA INCIDENT REPORTS"),
             html.Div(
                 children="""
-            KPI's Dashboard 
+            Incidences Numbers 
         """
             ),
             dcc.Graph(
                 id="graph-1a",
-                figure=px.bar(df, x="Fruit", y="Amount", color="City", barmode="group"),
+                figure=px.bar(df1, x="month", y="incidences_number", barmode="group"),
             ),
+            dcc.Graph(
+                id="graph-1b",
+                figure=px.bar(df1, x="priority", y="incidences_number", barmode="group"),
+            )
+            
         ]
     )
 
@@ -49,12 +63,12 @@ def create_dash_application2(flask_app):
             html.H1(children="IBERIA INCIDENT REPORTS"),
             html.Div(
                 children="""
-            KPI's Dashboard 
+            Incidences Type 
         """
             ),
             dcc.Graph(
-                id="example-graph",
-                figure=px.bar(df, x="Fruit", y="Amount", color="City", barmode="group"),
+                id="graph-2a",
+                figure=px.pie(df2, values="number", names="types", title ="Incidences by type"),
             ),
         ]
     )
@@ -79,7 +93,7 @@ def create_dash_application3(flask_app):
             ),
             dcc.Graph(
                 id="example-graph",
-                figure=px.bar(df, x="Fruit", y="Amount", color="City", barmode="group"),
+                figure=px.pie(df2, values="number", names="types", title ="Incidences by type"),
             ),
         ]
     )
