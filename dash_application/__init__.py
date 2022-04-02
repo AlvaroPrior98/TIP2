@@ -26,6 +26,36 @@ response = urlopen("https://g986b1d252d1c63-db2022.adb.eu-frankfurt-1.oracleclou
 df1 = json.loads(response.read())['items']
 
 
+df3 = pd.DataFrame(
+    {
+        "types": ["Access Failure", "Communications Failure", "Data Issue", "Default", "Hardware Failure", "Performance Issue",
+                  "Printing Failure", "Process Failure", "Security Issue", "Security Cyberattacks", "Software Failure", 
+                  "Software Warning", "Telephone Failure"],
+        "number": [3987, 153, 228, 161, 102, 851, 56, 181, 30, 23, 1919, 43, 53],
+    }
+)
+
+
+df4 = pd.DataFrame(
+    {
+        "month": ["January", "February", "March", "April",
+                  "January", "February", "March", "April",
+                  "January", "February", "March", "April"],
+        "number": [659, 727, 757, 837,
+                   47,35,48, 37,
+                   11,14,14,17
+            ],
+        "company": ["IBERIA", "IBERIA", "IBERIA", "IBERIA", 
+                    "IAG CARGO", "IAG CARGO", "IAG CARGO", "IAG CARGO",  
+                    "IBERIA EXPRESS", "IBERIA EXPRESS", "IBERIA EXPRESS", "IBERIA EXPRESS"]
+    }
+)
+
+
+
+
+
+
 def create_dash_application(flask_app):
     dash_app = dash.Dash(server=flask_app, name="KPI1", url_base_pathname="/kpi1/")
     dash_app.layout = html.Div(
@@ -63,13 +93,17 @@ def create_dash_application2(flask_app):
             html.H1(children="IBERIA INCIDENT REPORTS"),
             html.Div(
                 children="""
-            Incidences Type 
+            Incidences Type last 2 months 
         """
             ),
             dcc.Graph(
                 id="graph-2a",
-                figure=px.pie(df2, values="number", names="types", title ="Incidences by type"),
+                figure=px.pie(df2, values="number", names="types", title ="Incidences by type April"),
             ),
+            dcc.Graph(
+                id="graph-2b",
+                figure=px.pie(df3, values="number", names="types", title ="Incidences by type March"),
+            )
         ]
     )
 
@@ -88,12 +122,12 @@ def create_dash_application3(flask_app):
             html.H1(children="IBERIA INCIDENT REPORTS"),
             html.Div(
                 children="""
-            KPI's Dashboard 
+            Backlog incidents per company and month 
         """
             ),
             dcc.Graph(
-                id="example-graph",
-                figure=px.pie(df2, values="number", names="types", title ="Incidences by type"),
+                id="graph-3",
+                figure=px.bar(df4, x="month", y="number", color = "company", title ="Backlog Incidences by company name"),
             ),
         ]
     )
