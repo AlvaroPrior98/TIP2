@@ -9,9 +9,10 @@ from flask_login import LoginManager, login_user
 from flask_login.mixins import UserMixin
 
 from wtforms import StringField, PasswordField
-from wtforms.validators import Length, Email
+from wtforms.validators import Length, Email, EqualTo, AnyOf
 
 from werkzeug.security import generate_password_hash, check_password_hash
+
 
 from dash_application import create_dash_application
 from dash_application import create_dash_application2
@@ -42,13 +43,13 @@ class User(db.Model, UserMixin):
 
 
 class LoginForm(FlaskForm):
-    email = StringField("email", validators=[Email()])
+    email = StringField("email", validators=[Email(), AnyOf(values=['alvaro@iberia.com', 'araceli@iberia.com', 'admin1@iberia.com'], message=('Enter a registered company email'))])
     password = PasswordField("password", validators=[Length(min=5)])
 
 
 class RegisterForm(FlaskForm):
-    email = StringField("email", validators=[Email()])
-    password = PasswordField("password", validators=[Length(min=5)])
+    email = StringField("email", validators=[Email(),AnyOf(values=['alvaro@iberia.com', 'araceli@iberia.com', 'admin1@iberia.com'], message=('Enter a registered company email'))])
+    password = PasswordField("password", validators=[Length(min=5), EqualTo('repeat_password', message='Passwords must match')])
     repeat_password = PasswordField("repeated_password", validators=[Length(min=5)])
 
 
@@ -67,7 +68,7 @@ def login():
         if check_password_hash(user.password, form.password.data):
             login_user(user)
 
-            return redirect(url_for("index"))
+            return redirect(url_for("/kpi1/"))
 
     return render_template("login.html", form=form)
 
@@ -84,7 +85,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        return redirect(url_for("index"))
+        return redirect(url_for("login"))
 
     return render_template("register.html", form=form)
 

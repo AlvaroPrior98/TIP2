@@ -1,13 +1,17 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 from flask_login.utils import login_required
 import plotly.express as px
 import pandas as pd
+from dash_application import navigation
+import dash_bootstrap_components as dbc
 
-from urllib import response
-from urllib.request import urlopen
-import json
+
+#from urllib import response
+#from urllib.request import urlopen
+#import json
 
 # assume you have a "long-form" data frame
 # see https://plotly.com/python/px-arguments/ for more options
@@ -21,11 +25,6 @@ df2 = pd.DataFrame(
     }
 )
 
-
-response = urlopen("https://g986b1d252d1c63-db2022.adb.eu-frankfurt-1.oraclecloudapps.com/ords/tip/kpi1/incvol/")
-df1 = json.loads(response.read())['items']
-
-
 df3 = pd.DataFrame(
     {
         "types": ["Access Failure", "Communications Failure", "Data Issue", "Default", "Hardware Failure", "Performance Issue",
@@ -34,6 +33,7 @@ df3 = pd.DataFrame(
         "number": [3987, 153, 228, 161, 102, 851, 56, 181, 30, 23, 1919, 43, 53],
     }
 )
+
 
 
 df4 = pd.DataFrame(
@@ -57,9 +57,10 @@ df4 = pd.DataFrame(
 
 
 def create_dash_application(flask_app):
-    dash_app = dash.Dash(server=flask_app, name="KPI1", url_base_pathname="/kpi1/")
+    dash_app = dash.Dash(server=flask_app, name="KPI1", url_base_pathname="/kpi1/", external_stylesheets=[dbc.themes.DARKLY])  
     dash_app.layout = html.Div(
         children=[
+            navigation.navbar,
             html.H1(children="IBERIA INCIDENT REPORTS"),
             html.Div(
                 children="""
@@ -67,14 +68,9 @@ def create_dash_application(flask_app):
         """
             ),
             dcc.Graph(
-                id="graph-1a",
-                figure=px.bar(df1, x="month", y="incidences_number", barmode="group"),
-            ),
-            dcc.Graph(
-                id="graph-1b",
-                figure=px.bar(df1, x="priority", y="incidences_number", barmode="group"),
-            )
-            
+                id="graph-2a",
+                figure=px.pie(df2, values="number", names="types", title ="Incidences by type April"),
+            ),            
         ]
     )
 
@@ -87,18 +83,15 @@ def create_dash_application(flask_app):
     return dash_app
 
 def create_dash_application2(flask_app):
-    dash_app = dash.Dash(server=flask_app, name="KPI2", url_base_pathname="/kpi2/")
+    dash_app = dash.Dash(server=flask_app, name="KPI2", url_base_pathname="/kpi2/", external_stylesheets=[dbc.themes.DARKLY])
     dash_app.layout = html.Div(
         children=[
+            navigation.navbar,
             html.H1(children="IBERIA INCIDENT REPORTS"),
             html.Div(
                 children="""
             Incidences Type last 2 months 
         """
-            ),
-            dcc.Graph(
-                id="graph-2a",
-                figure=px.pie(df2, values="number", names="types", title ="Incidences by type April"),
             ),
             dcc.Graph(
                 id="graph-2b",
@@ -116,9 +109,10 @@ def create_dash_application2(flask_app):
     return dash_app
 
 def create_dash_application3(flask_app):
-    dash_app = dash.Dash(server=flask_app, name="KPI3", url_base_pathname="/kpi3/")
+    dash_app = dash.Dash(server=flask_app, name="KPI3", url_base_pathname="/kpi3/", external_stylesheets=[dbc.themes.DARKLY])
     dash_app.layout = html.Div(
         children=[
+            navigation.navbar,
             html.H1(children="IBERIA INCIDENT REPORTS"),
             html.Div(
                 children="""
