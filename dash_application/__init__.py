@@ -7,6 +7,8 @@ import plotly.express as px
 import pandas as pd
 from dash_application import navigation
 import dash_bootstrap_components as dbc
+import csv
+from collections import Counter
 
 
 #from urllib import response
@@ -16,40 +18,79 @@ import dash_bootstrap_components as dbc
 # assume you have a "long-form" data frame
 # see https://plotly.com/python/px-arguments/ for more options
 
-df2 = pd.DataFrame(
-    {
-        "types": ["Access Failure", "Communications Failure", "Data Issue", "Default", "Hardware Failure", "Performance Issue",
-                  "Printing Failure", "Process Failure", "Security Issue", "Security Cyberattacks", "Software Failure", 
-                  "Software Warning", "Telephone Failure"],
-        "number": [4206, 128, 231, 216, 128, 752, 49, 216, 20, 16, 1728, 25, 75],
-    }
-)
 
-df3 = pd.DataFrame(
-    {
-        "types": ["Access Failure", "Communications Failure", "Data Issue", "Default", "Hardware Failure", "Performance Issue",
-                  "Printing Failure", "Process Failure", "Security Issue", "Security Cyberattacks", "Software Failure", 
-                  "Software Warning", "Telephone Failure"],
-        "number": [3987, 153, 228, 161, 102, 851, 56, 181, 30, 23, 1919, 43, 53],
-    }
-)
+#Reading April's csv file for Icnident Type
+
+incidences_april = []
 
 
+with open('april.csv', 'r', encoding = 'utf8') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=';')  
+    
+    for skip in range(4):
+        next(csv_reader)
 
-df4 = pd.DataFrame(
-    {
-        "month": ["January", "February", "March", "April",
-                  "January", "February", "March", "April",
-                  "January", "February", "March", "April"],
-        "number": [659, 727, 757, 837,
-                   47,35,48, 37,
-                   11,14,14,17
-            ],
-        "company": ["IBERIA", "IBERIA", "IBERIA", "IBERIA", 
-                    "IAG CARGO", "IAG CARGO", "IAG CARGO", "IAG CARGO",  
-                    "IBERIA EXPRESS", "IBERIA EXPRESS", "IBERIA EXPRESS", "IBERIA EXPRESS"]
-    }
-)
+    
+    for line in csv_reader:
+        incidences_april.append(line[14])
+        
+data_april = dict(Counter(incidences_april))
+inc_types_april = data_april.keys()
+inc_number_april = data_april.values()
+
+final_data_april = {"types": inc_types_april, "number": inc_number_april}
+
+df2 = pd.DataFrame(final_data_april)
+
+
+
+#Reading March's csv file for Incident Type
+
+incidences_march = []
+
+
+with open('march.csv', 'r', encoding = 'utf8') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=';')  
+    
+    for skip in range(4):
+        next(csv_reader)
+
+    
+    for line in csv_reader:
+        incidences_march.append(line[14])
+        
+data_march = dict(Counter(incidences_march))
+inc_types_march = data_march.keys()
+inc_number_march = data_march.values()
+
+final_data_march = {"types": inc_types_march, "number": inc_number_march}
+
+df3 = pd.DataFrame(final_data_march)
+
+
+
+#Reading April's csv file for Incident Status
+
+status_april = []
+
+
+with open('april.csv', 'r', encoding = 'utf8') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=';')  
+    
+    for skip in range(4):
+        next(csv_reader)
+
+    
+    for line in csv_reader:
+        status_april.append(line[3])
+        
+data_status_april = dict(Counter(status_april))
+inc_status_april = data_status_april.keys()
+inc_status_number_april = data_status_april.values()
+
+final_data_status_april = {"status": inc_status_april, "number": inc_status_number_april}
+
+df4 = pd.DataFrame(final_data_status_april)
 
 
 
@@ -121,7 +162,7 @@ def create_dash_application3(flask_app):
             ),
             dcc.Graph(
                 id="graph-3",
-                figure=px.bar(df4, x="month", y="number", color = "company", title ="Backlog Incidences by company name"),
+                figure=px.bar(df4, x="status", y="number", title ="Backlog Incidences by company name"),
             ),
         ]
     )
